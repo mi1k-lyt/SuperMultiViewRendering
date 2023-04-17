@@ -1,0 +1,12 @@
+*.sln
+/.vs
+/Debug
+/packages
+/Textures
+/x64
+*.config
+*.vcxproj.filters
+*.vcxproj.user
+*.vcxproj
+/DX_CUDA/Debug
+/DX_CUDA/x64
