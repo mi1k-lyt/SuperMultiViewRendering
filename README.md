@@ -7,5 +7,5 @@
 ## 最终光场视图
 ![1](https://github.com/mi1k-lyt/SuperMultiViewRendering/blob/main/DX12_starline/ue_data/ccc.png)
 ## 最终光场效果
-
+https://github.com/mi1k-lyt/SuperMultiViewRendering/assets/96517489/d4fdf53b-cf18-4ba1-b5cf-ff2bb08c6fbe
 
