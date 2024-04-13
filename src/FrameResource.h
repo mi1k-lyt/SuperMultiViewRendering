@@ -3,8 +3,11 @@
 #define __FRAMERESOURCE_H__
 #include "dx12win.h"
 //#include "cuda.h"
+#include "stb_image/stb_image.h"
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/core/cvstd.hpp>
 #include <string>
 
 struct Vertex {
@@ -48,17 +51,13 @@ public:
 	cv::Mat _midColorImg;
 	cv::Mat _rightColorImg;
 
-	cv::Mat _leftDepthImg;
-	cv::Mat _midDepthImg;
-	cv::Mat _rightDepthImg;
+	void* leftColorImg = nullptr;
+	void* midColorImg = nullptr;
+	void* rightColorImg = nullptr;
 
-	const void* leftColorImg;
-	const void* midColorImg;
-	const void* rightColorImg;
-
-	const void* leftDepthImg;
-	const void* midDepthImg;
-	const void* rightDepthImg;
+	void* leftDepthImg = nullptr;
+	void* midDepthImg = nullptr;
+	void* rightDepthImg = nullptr;
 
 	
 	//每帧资源命令分配器
@@ -77,6 +76,9 @@ public:
 
 	//Fence
 	UINT64 Fence = 0;
+
+private:
+	void* ReadTiffDepthImage(const char* filePath);
 	
 };
 

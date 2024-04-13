@@ -1,0 +1,6 @@
+[submodule "vendor/dx12"]
+	path = vendor/dx12
+	url = https://github.com/microsoft/DirectX-Headers.git
+[submodule "vendor/tinyTiff"]
+	path = vendor/tinyTiff
+	url = https://github.com/jkriege2/TinyTIFF.git

@@ -1,5 +1,8 @@
 #include "FrameResource.h"
 
+#include "root_directory.h"
+#include "tinytiffreader.h"
+#include <fstream>
 FrameResource::FrameResource(ID3D12Device* device) {
 	ThrowIfFailed(device->CreateCommandAllocator(
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -166,21 +169,73 @@ FrameResource::FrameResource(ID3D12Device* device) {
 }
 
 void FrameResource::LoadImg() {
-	std::string filePath = "ue_data_2\\";
-
+	std::string rootPath = std::string(logl_root);
+	std::string filePath = rootPath + "/Resource/ue_data/";
+	int width, height, channels;
 	// 读取彩色图
-	_leftColorImg = cv::imread(filePath + "left_color.png", cv::IMREAD_UNCHANGED);
-	_midColorImg = cv::imread(filePath + "mid_color.png", cv::IMREAD_UNCHANGED);
-	_rightColorImg = cv::imread(filePath + "right_color.png", cv::IMREAD_UNCHANGED);
-	leftColorImg = reinterpret_cast<const void*>(_leftColorImg.data);
-	midColorImg = reinterpret_cast<const void*>(_midColorImg.data);
-	rightColorImg = reinterpret_cast<const void*>(_rightColorImg.data);
+
+	leftColorImg = stbi_load((filePath + "left_color.png").c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	midColorImg = stbi_load((filePath + "mid_color.png").c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	rightColorImg = stbi_load((filePath + "right_color.png").c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
 	//读取深度图
-	_leftDepthImg = cv::imread(filePath + "left_depth.tiff", cv::IMREAD_ANYDEPTH);
-	_midDepthImg = cv::imread(filePath + "mid_depth.tiff", cv::IMREAD_ANYDEPTH);
-	_rightDepthImg = cv::imread(filePath + "right_depth.tiff", cv::IMREAD_ANYDEPTH);
-	leftDepthImg = reinterpret_cast<const void*>(_leftDepthImg.data);
-	midDepthImg = reinterpret_cast<const void*>(_midDepthImg.data);
-	rightDepthImg = reinterpret_cast<const void*>(_rightDepthImg.data);
+	/*TinyTIFFReaderFile* test = TinyTIFFReader_open((filePath + "left_depth.tiff").c_str());
+
+	leftDepthImg = ReadTiffDepthImage((filePath + "left_depth.tiff").c_str());
+	midDepthImg = ReadTiffDepthImage((filePath + "mid_depth.tiff").c_str());
+	rightDepthImg = ReadTiffDepthImage((filePath + "right_depth.tiff").c_str());*/
+
+	/*cv::Mat _leftDepthImg = cv::imread((filePath + "left_depth.tiff"), cv::IMREAD_UNCHANGED);
+	cv::Mat _midDepthImg = cv::imread((filePath + "mid_depth.tiff"), cv::IMREAD_UNCHANGED);
+	cv::Mat _rightDepthImg = cv::imread((filePath + "right_depth.tiff"), cv::IMREAD_UNCHANGED);
+
+	leftDepthImg = reinterpret_cast<void*>(_leftDepthImg.data);
+	midDepthImg = reinterpret_cast<void*>(_midDepthImg.data);
+	rightDepthImg = reinterpret_cast<void*>(_rightDepthImg.data);*/
+
+	std::ifstream left_depthFile((filePath + "left_depth.bin").c_str(), std::ios::in | std::ios::binary);
+	std::ifstream mid_depthFile((filePath + "mid_depth.bin").c_str(), std::ios::in | std::ios::binary);
+	std::ifstream right_depthFile((filePath + "right_depth.bin").c_str(), std::ios::in | std::ios::binary);
+
+	leftDepthImg = (leftDepthImg == nullptr ? malloc(depth_pixel_x * depth_pixel_y * sizeof(float)) : leftDepthImg);
+	midDepthImg = (midDepthImg == nullptr ? malloc(depth_pixel_x * depth_pixel_y * sizeof(float)) : midDepthImg);
+	rightDepthImg = (rightDepthImg == nullptr ? malloc(depth_pixel_x * depth_pixel_y * sizeof(float)) : rightDepthImg);
+
+	left_depthFile.read(reinterpret_cast<char*>(leftDepthImg), depth_pixel_x * depth_pixel_y * sizeof(float));
+	mid_depthFile.read(reinterpret_cast<char*>(midDepthImg), depth_pixel_x * depth_pixel_y * sizeof(float));
+	right_depthFile.read(reinterpret_cast<char*>(rightDepthImg), depth_pixel_x * depth_pixel_y * sizeof(float));
+}
+
+void* FrameResource::ReadTiffDepthImage(const char* filePath)
+{
+	void* DepthImgData = nullptr;
+	TinyTIFFReaderFile* tiffFile = TinyTIFFReader_open(filePath);
+	if(!tiffFile)
+	{
+		OutputDebugString(L"Can not open tiff file!\n");
+		return nullptr;
+	}
+
+	if(TinyTIFFReader_getBitsPerSample(tiffFile, 0) != 32 || TinyTIFFReader_getSampleFormat(tiffFile) != TINYTIFF_SAMPLEFORMAT_FLOAT)
+	{
+		OutputDebugString(L"Wrong tiff format!\n");
+		TinyTIFFReader_close(tiffFile);
+		return nullptr;
+	}
+
+	uint32_t width = TinyTIFFReader_getWidth(tiffFile);
+	uint32_t height = TinyTIFFReader_getHeight(tiffFile);
+
+	std::vector<float> ImgData(width * height);
+	auto testnums = TinyTIFFReader_countFrames(tiffFile);
+
+	if(!TinyTIFFReader_getSampleData(tiffFile, ImgData.data(), TINYTIFF_SAMPLEFORMAT_FLOAT))
+	{
+		OutputDebugString(L"cant read tiff!\n");
+		return nullptr;
+	}
+
+	TinyTIFFReader_close(tiffFile);
+
+	return ImgData.data();
 }

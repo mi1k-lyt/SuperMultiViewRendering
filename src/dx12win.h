@@ -1,29 +1,29 @@
 //***************************************************************
-// DirectX_12ÒÔ¼°WindowsÍ·ÎÄ¼þ
-// directx/d3dx12.h°üº¬CD3DX12µÄ¸¨Öú½á¹¹
-// Ìí¼Ó¸¨Öú½á¹¹£¬¿ÉÄÜ»áµ¼ÖÂÓëWindows SDK³åÍ»
-// ËùÒÔÐèÒªÌáÇ°ÔÚ°üº¬Ä¿Â¼ÖÐ°üº¬
+// DirectX_12ï¿½Ô¼ï¿½WindowsÍ·ï¿½Ä¼ï¿½
+// directx/d3dx12.hï¿½ï¿½ï¿½ï¿½CD3DX12ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½á¹¹
+// ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½Ü»áµ¼ï¿½ï¿½ï¿½ï¿½Windows SDKï¿½ï¿½Í»
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ç°ï¿½Ú°ï¿½ï¿½ï¿½Ä¿Â¼ï¿½Ð°ï¿½ï¿½ï¿½
 // Created By YunTao Li
 //***************************************************************
 
 #ifndef __DX12WIN_H__
 #define __DX12WIN_H__
 
-// Ìí¼ÓWin
+// ï¿½ï¿½ï¿½ï¿½Win
 #include <SDKDDKVer.h>
 #include <windows.h>
 #include <tchar.h>
 #include <string>
 #include <comdef.h>
 
-// Ìí¼Ówrl,Ö§³ÖComPtr
+// ï¿½ï¿½ï¿½ï¿½wrl,Ö§ï¿½ï¿½ComPtr
 #include <wrl.h>
 
-// Ìí¼ÓDX12
+// ï¿½ï¿½ï¿½ï¿½DX12
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
-#include <d3d12.h>
+#include <directx/d3d12.h>
 #include <d3d12shader.h>
 #include <d3dcompiler.h>
 #include "directx/d3dx12.h"
@@ -34,11 +34,11 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-#if defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG) 
 #include <dxgidebug.h>
 #endif
 //***************************************************************
-// »ù´¡ÉèÖÃºê¶¨Òå
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãºê¶¨ï¿½ï¿½
 //***************************************************************
 #define WindowName L"Metahuman-MultiView-LightFiled-Renderer"
 #define WndClassName L"MainWin"
@@ -47,7 +47,7 @@
 
 #define MY_PI 3.1415926535f
 //**************************************************************
-// ·Ö±æÂÊÉèÖÃ
+// ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //**************************************************************
 #define total_pixel_x 7680
 #define total_pixel_y 4320
@@ -72,7 +72,7 @@
 #define crop_color_pixel_x 0
 #define crop_color_pixel_y 0
 //***************************************************************
-// ½üÆ½Ãæ²ÎÊý
+// ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½
 //***************************************************************
 #define down_left_x -2.0f
 #define down_left_y -1.125f
@@ -80,7 +80,7 @@
 #define scales_x 4.0f
 #define scales_y 2.25f
 //***************************************************************
-// ¹â³¡±àÂë²ÎÊý
+// ï¿½â³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //***************************************************************
 #define _ViewNum 70
 #define _LineNum 30.90091
@@ -92,7 +92,7 @@
 
 #define testViewNum 35
 //***************************************************************
-// DX12µÄÒì³£´¦ÀíÅ×³ö
+// DX12ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½×³ï¿½
 //***************************************************************
 class DxException
 {
@@ -118,17 +118,17 @@ inline std::wstring AnsiToWString(const std::string& str)
 	MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
 	return std::wstring(buffer);
 }
-#ifndef ThrowIfFailed
+
 #define ThrowIfFailed(x)                                              \
 {                                                                     \
     HRESULT hr__ = (x);                                               \
     std::wstring wfn = AnsiToWString(__FILE__);                       \
     if(FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); } \
 }
-#endif
+
 
 //***************************************************************
-// ÏòÉÏ×Ö½Ú¶ÔÆë
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ö½Ú¶ï¿½ï¿½ï¿½
 //***************************************************************
 #define UPPER(A,B) ((UINT)(((A)+((B)-1))&~(B-1)))
 

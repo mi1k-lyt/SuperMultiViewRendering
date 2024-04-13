@@ -90,5 +90,5 @@ float4 PS(VertexOut pin) : SV_Target
         Color = pow(Color, (1 / 2.2f));
     }
     
-    return Color;
+    return Color.bgra;
 }

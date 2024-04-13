@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 class DXApp {
 public:
 	DXApp(HINSTANCE hInstance);
@@ -109,7 +110,7 @@ protected:
 	//***************************************************************
 	// FrameResource
 	//***************************************************************
-	const int NumFrameResource = 3;
+	const int NumFrameResource = 1;
 	const int NumSrvPerFrame = 4;
 	const int NumUavPerFrame = 3;
 	const int NumSamplePerFrame = 2;

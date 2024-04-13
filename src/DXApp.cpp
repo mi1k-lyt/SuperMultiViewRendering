@@ -1,4 +1,5 @@
 #include "DXApp.h"
+#include <codecvt>
 
 // 窗口过程函数
 LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -123,11 +124,24 @@ bool DXApp::InitDX() {
 				continue;
 			}
 			else { //这里是只为了建立单个显卡，所以一旦检测到独显就不在枚举适配器，后期多显卡改这里
-				ThrowIfFailed(D3D12CreateDevice(
+				HRESULT hr = D3D12CreateDevice(
 					mAdapter.Get(),
 					D3D_FEATURE_LEVEL_12_1,
 					IID_PPV_ARGS(&md3dDevice)
-				));
+				);
+				if(SUCCEEDED(hr))
+				{
+					printf("yes\n");
+				}
+				else
+				{
+					printf("no\n");
+				}
+				/*ThrowIfFailed(D3D12CreateDevice(
+					mAdapter.Get(),
+					D3D_FEATURE_LEVEL_12_1,
+					IID_PPV_ARGS(&md3dDevice)
+				));*/
 				ThrowIfFailed(md3dDevice->CheckFeatureSupport(
 					D3D12_FEATURE_ARCHITECTURE,
 					&mGPUFeature,
@@ -821,39 +835,44 @@ void DXApp::BuildRootSignature() {
 		IID_PPV_ARGS(&mRootSignature))
 	);
 }
-
+extern const char* logl_root;
 void DXApp::BuildShaderAndInputLayout() {
+	// 创建std::wstring_convert对象
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+
+	// 将const char*转换为std::wstring
+	std::wstring rootPath = converter.from_bytes(logl_root);
 
 	mShader["VS"] = CompileShader(
-		L"Shader/renderer.hlsl",
+		rootPath + L"/Resource/Shader/renderer.hlsl",
 		nullptr,
 		"VS",
 		"vs_5_1"
 	);
 
 	mShader["PS"] = CompileShader(
-		L"Shader/renderer.hlsl",
+		rootPath + L"/Resource/Shader/renderer.hlsl",
 		nullptr,
 		"PS",
 		"ps_5_1"
 	);
 
 	mShader["RaycastCS"] = CompileShader(
-		L"Shader/raycast.hlsl",
+		rootPath + L"/Resource/Shader/raycast.hlsl",
 		nullptr,
 		"Raycast",
 		"cs_5_1"
 	);
 
 	mShader["SplattingCS"] = CompileShader(
-		L"Shader/raycast.hlsl",
+		rootPath + L"/Resource/Shader/raycast.hlsl",
 		nullptr,
 		"Splatting",
 		"cs_5_1"
 	);
 
 	mShader["LightFieldEncodingCS"] = CompileShader(
-		L"Shader/raycast.hlsl",
+		rootPath + L"/Resource/Shader/raycast.hlsl",
 		nullptr,
 		"LightFieldEncoding",
 		"cs_5_1"

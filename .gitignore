@@ -1,4 +1,5 @@
 .vs/
+.vscode/
 x64/
 *.sln
 Release/
@@ -6,5 +7,5 @@ packages/
 *.vcxproj.filters
 *.vcxproj.user
 *.vcxproj
-DX12_starline/Release/
-DX12_starline/x64/
+bin/
+build
